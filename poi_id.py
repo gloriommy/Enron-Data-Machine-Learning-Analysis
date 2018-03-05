@@ -15,7 +15,7 @@ from sklearn.cross_validation import StratifiedShuffleSplit
 import math
 import numpy
 
-### Task 1: Select what features you'll use.
+### Task 1: Select Features.
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature must be "poi".
 
@@ -32,9 +32,9 @@ with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
 
 ### Task 2: Remove outliers
-data_dict.pop("TOTAL", 0) # removing the outlier identified in the lesson (spreadsheet quirk)
+data_dict.pop("TOTAL", 0) # removing the outlier. 
 
-### Task 3: Create new feature(s)
+### Task 3: Creating a new feature (proportion of emails sent to persons of interest to total emails sent)
 names = data_dict.keys()
 for name in names:
     data_dict[name]["to_poi/total_to_messages"] = float(data_dict[name]["from_this_person_to_poi"]) / float(data_dict[name]["to_messages"])
@@ -42,58 +42,24 @@ for name in names:
     if math.isnan(data_dict[name]["to_poi/total_to_messages"]):
         data_dict[name]["to_poi/total_to_messages"] = 0
     
-    
 ### Store to my_dataset for easy export below. 
 my_dataset = data_dict
-
 
 ### Extract features and labels from dataset for local testing
 data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
-
-### Task 4: Try a variety of classifiers
-### Please name your classifier clf for easy export below.
-### Note that if you want to do PCA or other multi-stage operations,
-### you'll need to use Pipelines. For more info:
-### http://scikit-learn.org/stable/modules/pipeline.html
-
-# Provided to give you a starting point. Try a variety of classifiers.
+### Task 4: Trying a variety of classifiers.
 from sklearn.naive_bayes import GaussianNB
 from sklearn import tree
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.svm import SVC
-#
 #clf = GaussianNB() #Accuracy: 0.37713       Precision: 0.15600      Recall: 0.83250
 #clf = tree.DecisionTreeClassifier()  #Accuracy: 0.80233       Precision: 0.24751      Recall: 0.23650
 #clf = GradientBoostingClassifier() #Accuracy: 0.85473       Precision: 0.41841      Recall: 0.22950
 #clf = SVC()
 
-### Task 5: Tune your classifier to achieve better than .3 precision and recall 
-### using our testing script. Check the tester.py script in the final project
-### folder for details on the evaluation method, especially the test_classifier
-### function. Because of the small size of the dataset, the script uses
-### stratified shuffle split cross validation. For more info: 
-### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
-
-
-# Example starting point. Try investigating other evaluation techniques!
-
-'''
-# Searching for best parameters
-param_test1 = {"max_features":range(1, 19, 2)}
-param_test2 = {"kernel" : ("linear", "rbf")}
-
-gsearch1 = GridSearchCV(estimator = SVC(kernel = "linear"), param_grid = param_test2, scoring = 'recall', cv = 5)
-
-selector = SelectKBest(f_classif, k = 10)
-selector.fit(features, labels)
-features = selector.transform(features)
-
-gsearch1.fit(features, labels)
-print gsearch1.best_params_
-'''
-
+# Final, best performing model
 clf = SVC(kernel = "sigmoid", C = 45, gamma = 0.5)
 
 from sklearn.cross_validation import train_test_split
