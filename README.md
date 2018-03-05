@@ -1,4 +1,4 @@
-# Enron-Data-Machine-Learning-Analysis
+# Enron-Data-Machine-Learning
 In this project, I've used a panel of machine learning algorithms to identify Enron employees who may have committed fraud based on the public Enron financial and email dataset.
 
 # Content Summary
